@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 @Entity
 @Table (name = "user")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +21,6 @@ public class User {
     private Byte age;
 
     public User() {
-
     }
 
     @Override
@@ -71,5 +71,5 @@ public class User {
         this.age = age;
     }
 
-
+    //todo: стоит ввести переопределение equals/hashCode
 }

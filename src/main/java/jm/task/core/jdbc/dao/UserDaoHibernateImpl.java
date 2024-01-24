@@ -12,6 +12,11 @@ import java.util.List;
 import static jm.task.core.jdbc.util.Util.getSessionFactory;
 
 public class UserDaoHibernateImpl implements UserDao {
+
+    //todo: ..аналогичные ошибки.. стоит по аналогии привести код в порядок
+    //todo: SessionFactory sessionFactory - выносим, инициализируем ..пользуем в методах..
+
+
     public UserDaoHibernateImpl() {
 
     }

@@ -6,6 +6,9 @@ import jm.task.core.jdbc.service.UserServiceImpl;
 import java.sql.SQLException;
 
 public class Main {
+
+    //todo: просьба протестить обе реализации. Commit - это рабочий функционал, прошедший тесты
+
     public static void main(String[] args) throws SQLException {
         UserService userService = new UserServiceImpl();
         userService.createUsersTable();

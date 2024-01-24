@@ -11,25 +11,29 @@ import java.util.List;
 import static java.sql.DriverManager.getConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-//    private static final  = Util.connection();
+//    private static final  = Util.connection();//todo: комментарии кода - не стоит оставлять
 
+    //todo: прописываем общий на класс Connection connection и инициализируем через constructor, из Util
 
-    public UserDaoJDBCImpl() {
+    //todo: выносим аналогично с Util константы ... и именуем их согласно codeStyle, например:
+    private static final String createUsersQuery = "create table User (" +
+            "Id int, Name varchar(256), Lastname varchar(256), Age int" +
+            ")";//todo: запрос (нужно посмотреть к-нибудь пример) - заглавными символами операторы.. IF NOT EXISTS уже вижу не хватает
+
+    public UserDaoJDBCImpl() {//todo: пустой constructor зачем?
 
     }
 
     public void createUsersTable() throws SQLException {
         Connection connection = null;
         Statement statement = null;
-        try {
+        try {//todo: Statement - в качестве ресурса в try_with_resources
             connection = Util.connect();
             statement = connection.createStatement();
-            statement.executeUpdate("create table User (" +
-                    "Id int, Name varchar(256), Lastname varchar(256), Age int" +
-                    ")");
+            statement.executeUpdate(createUsersQuery);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
+            System.out.println(e.getMessage());//todo: описал ситуацию в Util
+        } finally {//todo: избавимся c введением - try_with_resources
             if (statement != null) {
                 statement.close();
             }

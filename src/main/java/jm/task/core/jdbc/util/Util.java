@@ -14,16 +14,22 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
+
+    //todo: константы выносим из тела метода, например:
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/myschema?useSSL=false";
+
+
+
+
     private static SessionFactory sessionFactory;
 
-    public static SessionFactory getSessionFactory() throws HibernateException {
+    public static SessionFactory getSessionFactory() throws HibernateException {//todo: избавляемся от static (так бы ломаем парадигму ООП)
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
-
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/myschema?useSSL=false");
+                settings.put(Environment.URL, DB_URL);
                 settings.put(Environment.USER, "root");
                 settings.put(Environment.PASS, "root");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
@@ -44,17 +50,17 @@ public class Util {
         return sessionFactory;
     }
 
-    public static Connection connect() throws ClassNotFoundException {
+    public static Connection connect() throws ClassNotFoundException {//todo: избавляемся от static (так бы ломаем парадигму ООП)
         String userName = "root";
         String password = "root";
-        String connectionURL = "jdbc:mysql://localhost:3306/myschema";
+//        String connectionURL = "jdbc:mysql://localhost:3306/myschema";//todo: нет необходимости.. подставляем сразу
         Class.forName("com.mysql.cj.jdbc.Driver");
         try {
-            Connection connection = DriverManager.getConnection(connectionURL, userName, password);
+            Connection connection = DriverManager.getConnection(DB_URL, userName, password);
             System.out.println("We are connected");
             return connection;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("...." + e.getMessage());//todo: роняем приложение, где дальнейшая работа не целесообразна (везде ..просмотреть по коду)
         }
     }
 }

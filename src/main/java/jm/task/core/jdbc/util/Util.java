@@ -14,16 +14,14 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
-
-    //todo: константы выносим из тела метода, например:
     private static final String DB_URL = "jdbc:mysql://localhost:3306/myschema?useSSL=false";
-
-
+    private static final String userName = "root";
+    private static final String password = "root";
 
 
     private static SessionFactory sessionFactory;
 
-    public static SessionFactory getSessionFactory() throws HibernateException {//todo: избавляемся от static (так бы ломаем парадигму ООП)
+    public SessionFactory getSessionFactory() throws HibernateException {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
@@ -50,17 +48,14 @@ public class Util {
         return sessionFactory;
     }
 
-    public static Connection connect() throws ClassNotFoundException {//todo: избавляемся от static (так бы ломаем парадигму ООП)
-        String userName = "root";
-        String password = "root";
-//        String connectionURL = "jdbc:mysql://localhost:3306/myschema";//todo: нет необходимости.. подставляем сразу
-        Class.forName("com.mysql.cj.jdbc.Driver");
+    public Connection connect() {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(DB_URL, userName, password);
             System.out.println("We are connected");
             return connection;
-        } catch (SQLException e) {
-            throw new RuntimeException("...." + e.getMessage());//todo: роняем приложение, где дальнейшая работа не целесообразна (везде ..просмотреть по коду)
+        } catch (Exception e) {
+            throw new RuntimeException("...." + e.getMessage());
         }
     }
 }

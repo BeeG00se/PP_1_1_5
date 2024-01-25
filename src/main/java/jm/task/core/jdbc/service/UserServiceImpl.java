@@ -9,27 +9,30 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-
-//    UserDao userDao = new UserDaoHibernateImpl();//todo: инициализация - через constructor
-
-    UserDao userDao = new UserDaoJDBCImpl();//todo: так ..достаточно, просто комментируем ненужную стоку и получаем нужную реализацию
-
+    UserDao userDao;
+public UserServiceImpl() {
+    userDao  = new UserDaoJDBCImpl();
+//    userDao = new UserDaoHibernateImpl();
+}
 
     public void createUsersTable() throws SQLException {
         userDao.createUsersTable();
+        System.out.println("Таблица создана");
     }
 
     public void dropUsersTable() throws SQLException {
         userDao.dropUsersTable();
+        System.out.println("Таблица удалена");
     }
 
     public void saveUser(String name, String lastName, byte age) {
         userDao.saveUser(name, lastName, age);
-        System.out.println("User с именем – " + name + " добавлен в базу данных");//todo: так правильно - логи (их имитация) должна быть в этом слое, только во всех методах, чтобы видеть работу
+        System.out.println("User с именем – " + name + " добавлен в базу данных");
     }
 
     public void removeUserById(long id) {
         userDao.removeUserById(id);
+        System.out.println("User с id – " + id + " удален из базы данных");
     }
 
     public List<User> getAllUsers() {
@@ -38,5 +41,6 @@ public class UserServiceImpl implements UserService {
 
     public void cleanUsersTable() {
         userDao.cleanUsersTable();
+        System.out.println("Таблица очищена");
     }
 }

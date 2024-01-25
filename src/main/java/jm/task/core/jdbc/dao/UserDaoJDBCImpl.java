@@ -11,91 +11,64 @@ import java.util.List;
 import static java.sql.DriverManager.getConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-//    private static final  = Util.connection();//todo: комментарии кода - не стоит оставлять
-
-    //todo: прописываем общий на класс Connection connection и инициализируем через constructor, из Util
-
-    //todo: выносим аналогично с Util константы ... и именуем их согласно codeStyle, например:
-    private static final String createUsersQuery = "create table User (" +
+    Connection connection;
+    private static final String createUsersQuery = "CREATE TABLE IF NOT EXISTS  USER (" +
             "Id int, Name varchar(256), Lastname varchar(256), Age int" +
-            ")";//todo: запрос (нужно посмотреть к-нибудь пример) - заглавными символами операторы.. IF NOT EXISTS уже вижу не хватает
+            ")";
+    private static final String dropUsersQuery = "DROP TABLE IF EXISTS USER";
+    private static final String saveUserQuery = "INSERT INTO USER (name, lastName, age) VALUES (?, ?, ?)";
+    private static final String removeUserQuery = "DELETE FROM USER WHERE id = ?";
+    private static final String getAllUsersQuery = "SELECT * FROM USER";
+    private static final String cleanUsersQuery = "TRUNCATE TABLE USER";
 
-    public UserDaoJDBCImpl() {//todo: пустой constructor зачем?
 
+    public UserDaoJDBCImpl() {
+        Util util = new Util();
+        connection = util.connect();
     }
 
-    public void createUsersTable() throws SQLException {
-        Connection connection = null;
-        Statement statement = null;
-        try {//todo: Statement - в качестве ресурса в try_with_resources
-            connection = Util.connect();
-            statement = connection.createStatement();
+    public void createUsersTable() {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(createUsersQuery);
         } catch (Exception e) {
-            System.out.println(e.getMessage());//todo: описал ситуацию в Util
-        } finally {//todo: избавимся c введением - try_with_resources
-            if (statement != null) {
-                statement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            throw new RuntimeException("...." + e.getMessage());
         }
-
     }
 
     public void dropUsersTable() throws SQLException {
-        Connection connection = null;
-        Statement statement = null;
-        try {
-            connection = Util.connect();
-            statement = connection.createStatement();
-            statement.executeUpdate("drop table if exists user");
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(dropUsersQuery);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            if (statement != null) {
-                statement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            throw new RuntimeException("...." + e.getMessage());
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        Connection connection = null;
         try {
-            connection = Util.connect();
-            PreparedStatement sql = connection.prepareStatement("INSERT INTO User (name, lastName, age) VALUES (?, ?, ?)");
+            PreparedStatement sql = connection.prepareStatement(saveUserQuery);
             sql.setString(1, name);
             sql.setString(2, lastName);
             sql.setByte(3, age);
             sql.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("...." + e.getMessage());
         }
     }
 
     public void removeUserById(long id) {
-        Connection connection = null;
         try {
-            connection = Util.connect();
-            PreparedStatement sql = connection.prepareStatement("DELETE FROM user WHERE id = ?");
+            PreparedStatement sql = connection.prepareStatement(removeUserQuery);
             sql.setLong(1, id);
             sql.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("...." + e.getMessage());
         }
     }
 
     public List<User> getAllUsers() {
-        List <User> users = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = Util.connect();
-            Statement sql = connection.createStatement();
-            sql.execute("select * from user");
+        List<User> users = new ArrayList<>();
+        try (Statement sql = connection.createStatement()) {
+            sql.execute(getAllUsersQuery);
             ResultSet re = sql.getResultSet();
             while (re.next()) {
                 String name = re.getString("name");
@@ -105,19 +78,16 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(user);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("...." + e.getMessage());
         }
         return users;
     }
 
     public void cleanUsersTable() {
-        Connection connection = null;
-        try {
-            connection = Util.connect();
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("TRUNCATE TABLE user");
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(cleanUsersQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("...." + e.getMessage());
         }
     }
 }

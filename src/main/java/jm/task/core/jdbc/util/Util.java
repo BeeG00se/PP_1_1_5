@@ -14,12 +14,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
+
     private static final String DB_URL = "jdbc:mysql://localhost:3306/myschema?useSSL=false";
     private static final String USER_NAME = "root";
     private static final String PASSWORD = "root";
 
-
-    private static SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;//todo: static - не нужен
 
     public SessionFactory getSessionFactory() throws HibernateException {
         if (sessionFactory == null) {
@@ -31,7 +31,7 @@ public class Util {
                 settings.put(Environment.USER, USER_NAME);
                 settings.put(Environment.PASS, PASSWORD);
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
-                settings.put(Environment.SHOW_SQL, "true");
+                settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.HBM2DDL_AUTO, "");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 configuration.setProperties(settings);

@@ -9,13 +9,13 @@ import javax.persistence.NoResultException;
 import java.util.Collections;
 import java.util.List;
 
-
 public class UserDaoHibernateImpl implements UserDao {
+
     SessionFactory sessionFactory;
 
     public UserDaoHibernateImpl() {
-        Util util = new Util();
-        sessionFactory = util.getSessionFactory();
+//        Util util = new Util();//todo: codeStyle
+        sessionFactory = new Util().getSessionFactory();
     }
 
     private static final String CREATE_USERS_QUERY = "CREATE TABLE IF NOT EXISTS user " +
@@ -44,8 +44,8 @@ public class UserDaoHibernateImpl implements UserDao {
     public void dropUsersTable() {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(DROP_USERS_QUERY).addEntity(User.class);
-            query.executeUpdate();
+            Query dropUsersQuery = session.createSQLQuery(DROP_USERS_QUERY).addEntity(User.class);//todo: codeStyle
+            dropUsersQuery.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             throw new RuntimeException("Не получилось удалить таблицу" + e.getMessage());
@@ -54,15 +54,15 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Transaction transss = null;
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            transss = session.beginTransaction();
+            transaction = session.beginTransaction();
             User user = new User(name, lastName, age);
             session.save(user);
-            transss.commit();
-        } catch (RuntimeException e) {
-            transss.rollback();
-            throw e;
+            transaction.commit();
+        } catch (RuntimeException e) {//todo: правильно откатились по transaction
+            transaction.rollback();
+            throw new RuntimeException("User can't save: " + e.getMessage());
         }
     }
 

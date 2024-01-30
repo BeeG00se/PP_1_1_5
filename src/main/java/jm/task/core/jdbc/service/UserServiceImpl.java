@@ -15,12 +15,12 @@ public UserServiceImpl() {
     userDao = new UserDaoHibernateImpl();
 }
 
-    public void createUsersTable() throws SQLException {
+    public void createUsersTable() {
         userDao.createUsersTable();
         System.out.println("Таблица создана");
     }
 
-    public void dropUsersTable() throws SQLException {
+    public void dropUsersTable() {
         userDao.dropUsersTable();
         System.out.println("Таблица удалена");
     }

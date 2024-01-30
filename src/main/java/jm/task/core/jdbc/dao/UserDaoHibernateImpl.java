@@ -18,34 +18,38 @@ public class UserDaoHibernateImpl implements UserDao {
         sessionFactory = util.getSessionFactory();
     }
 
-    private static final String createUsersQuery = "CREATE TABLE IF NOT EXISTS user " +
+    private static final String CREATE_USERS_QUERY = "CREATE TABLE IF NOT EXISTS user " +
             "(id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
             "name VARCHAR(50) NOT NULL, lastName VARCHAR(50) NOT NULL, " +
             "age TINYINT NOT NULL)";
-    private static final String dropUsersQuery = "DROP TABLE IF EXISTS User";
-    private static final String getAllUsersQuery = "FROM User";
-    private static final String cleanQuery = "TRUNCATE TABLE User";
+    private static final String DROP_USERS_QUERY = "DROP TABLE IF EXISTS User";
+    private static final String GET_ALL_USERS_QUERY = "FROM User";
+    private static final String CLEAN_USERS_QUERY = "TRUNCATE TABLE User";
 
 
     @Override
     public void createUsersTable() {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = session.createSQLQuery(createUsersQuery).addEntity(User.class);
-        query.executeUpdate();
-        transaction.commit();
-        session.close();
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createSQLQuery(CREATE_USERS_QUERY).addEntity(User.class);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Не получилось создать таблицу" + e.getMessage());
+        }
 
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = session.createSQLQuery(dropUsersQuery).addEntity(User.class);
-        query.executeUpdate();
-        transaction.commit();
-        session.close();
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createSQLQuery(DROP_USERS_QUERY).addEntity(User.class);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Не получилось удалить таблицу" + e.getMessage());
+        }
     }
 
     @Override
@@ -68,27 +72,28 @@ public class UserDaoHibernateImpl implements UserDao {
             User user = (User) session.find(User.class, id);
             session.remove(user);
         } catch (HibernateException | NoResultException e) {
-            throw new RuntimeException("...." + e.getMessage());
+            throw new RuntimeException("Не получилось удалить User по id" + e.getMessage());
         }
     }
 
     @Override
     public List<User> getAllUsers() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery(getAllUsersQuery).list();
+            return session.createQuery(GET_ALL_USERS_QUERY).list();
         } catch (HibernateException | NoResultException e) {
-            throw new RuntimeException("...." + e.getMessage());
+            throw new RuntimeException("Не получилось получить всех Users" + e.getMessage());
         }
     }
 
     @Override
     public void cleanUsersTable() {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = session.createSQLQuery(cleanQuery).addEntity(User.class);
-        query.executeUpdate();
-
-        transaction.commit();
-        session.close();
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createSQLQuery(CLEAN_USERS_QUERY).addEntity(User.class);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Не получилось очистить таблицу" + e.getMessage());
+        }
     }
 }

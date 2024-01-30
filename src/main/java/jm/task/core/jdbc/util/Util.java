@@ -15,8 +15,8 @@ import java.util.Properties;
 
 public class Util {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/myschema?useSSL=false";
-    private static final String userName = "root";
-    private static final String password = "root";
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "root";
 
 
     private static SessionFactory sessionFactory;
@@ -28,8 +28,8 @@ public class Util {
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
                 settings.put(Environment.URL, DB_URL);
-                settings.put(Environment.USER, "root");
-                settings.put(Environment.PASS, "root");
+                settings.put(Environment.USER, USER_NAME);
+                settings.put(Environment.PASS, PASSWORD);
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
                 settings.put(Environment.SHOW_SQL, "true");
                 settings.put(Environment.HBM2DDL_AUTO, "");
@@ -51,11 +51,11 @@ public class Util {
     public Connection connect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(DB_URL, userName, password);
+            Connection connection = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
             System.out.println("We are connected");
             return connection;
         } catch (Exception e) {
-            throw new RuntimeException("...." + e.getMessage());
+            throw new RuntimeException("Не удалось подключиться к БД" + e.getMessage());
         }
     }
 }
